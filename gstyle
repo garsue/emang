@@ -30,13 +30,24 @@ def compose_new_filenames(matches):
     return ["{0} - {1}.{2}".format(a, t, e) for a, t, e in filename_parts]
 
 
+def check_existence(f):
+    @wraps(f)
+    def decorated(to_abspath, olds, news):
+        existence = [(new, path.exists(to_abspath(new))) for new in news]
+        if not any(exists for _, exists in existence):
+            return f(to_abspath, olds, news)
+        print("Already existed: ")
+        [print("\t", new) for new, exists in existence if exists]
+    return decorated
+
+
 def rename_or_not(f):
     @wraps(f)
-    def decorated(curdir, olds, news):
+    def decorated(to_abspath, olds, news):
         if news:
             print("Rename to:")
             [print("\t", old, "->", new) for old, new in zip(olds, news)]
-            return f(curdir, olds, news)
+            return f(to_abspath, olds, news)
         print("Nothing to rename.")
     return decorated
 
@@ -52,11 +63,12 @@ def require_confirm(f):
     return decorated
 
 
+@check_existence
 @rename_or_not
 @require_confirm
-def execute(curdir, olds, news):
-    abspath = partial(path.join, curdir)
-    [os.rename(abspath(old), abspath(new)) for old, new in zip(olds, news)]
+def execute(to_abspath, olds, news):
+    rename = lambda old, new: os.rename(to_abspath(old), to_abspath(new))
+    [rename(old, new) for old, new in zip(olds, news)]
 
 
 if __name__ == "__main__":
@@ -65,4 +77,5 @@ if __name__ == "__main__":
     matches = get_matches(files)
     olds = get_old_filenames(files, matches)
     news = compose_new_filenames(matches)
-    execute(curdir, olds, news)
+    to_abspath = partial(path.join, curdir)
+    execute(to_abspath, olds, news)
