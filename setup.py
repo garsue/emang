@@ -3,7 +3,8 @@
 
 from setuptools import setup, find_packages
 setup(
-        name = "garsue_style",
-        version = "1.0",
+        name = "GarSue-Style",
+        version = "1.2",
         packages = find_packages(),
+        scripts = ["gstyle"]
         )
