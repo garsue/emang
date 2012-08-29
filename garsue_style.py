@@ -28,24 +28,29 @@ def compose_new_filenames(matches):
     return ["{0} - {1}.{2}".format(a, t, e) for a, t, e in filename_parts]
 
 
-def list_filenames(olds, news):
-    if olds and news:
-        print("Rename to:")
-        [print("\t", old, "->", new) for old, new in zip(olds, news)]
-    print("Nothing to rename.")
-    exit()
+def rename_or_not(f):
+    @wraps(f)
+    def decorated(curdir, olds, news):
+        if news:
+            print("Rename to:")
+            [print("\t", old, "->", new) for old, new in zip(olds, news)]
+            return f(curdir, olds, news)
+        print("Nothing to rename.")
+    return decorated
 
 
 def require_confirm(f):
-    @wraps
+    @wraps(f)
     def decorated(*args, **kwargs):
         ans = input("Do you want to rename? ('yes' or 'no'): ")
         if ans in ["y", "yes"]:
             f(*args, **kwargs)
-            print("Done!")
+            return print("Done!")
         print("Canceled by user.")
+    return decorated
 
 
+@rename_or_not
 @require_confirm
 def execute(curdir, olds, news):
     abspath = partial(path.join, curdir)
@@ -53,10 +58,9 @@ def execute(curdir, olds, news):
 
 
 if __name__ == "__main__":
-    curdir = path.dirname(path.abspath(os.curdir))
+    curdir = path.abspath(os.curdir)
     files = next(os.walk(curdir))[2]
     matches = get_matches(files)
     olds = get_old_filenames(files, matches)
     news = compose_new_filenames(matches)
-    list_filenames(olds, news)
     execute(curdir, olds, news)
