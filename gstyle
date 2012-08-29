@@ -20,7 +20,9 @@ def get_old_filenames(files, matches):
 
 def get_filename_parts(match):
     """Return (author, title, extension)"""
-    return match.group(1), match.group(2).rstrip("_2"), match.group(3)
+    author, title, extension = match.group(1), match.group(2), match.group(3)
+    title = title[:-2] if title.endswith("_2") else title
+    return author, title, extension
 
 
 def compose_new_filenames(matches):
