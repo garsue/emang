@@ -6,7 +6,7 @@ import os
 from os import path
 import re
 
-import renamer
+import emang
 
 
 class TestRenamer(unittest.TestCase):
@@ -46,7 +46,7 @@ class TestRenamer(unittest.TestCase):
         self.assertEqual(test, expect)
 
     def test_get_matches(self):
-        test = renamer.get_matches(self.files)
+        test = emang.get_matches(self.files)
         self.assertIsNone(test[0])
         self.assertIsNone(test[1])
         self.assertEqual(test[2].groups(), ("author", "title", "exp"))
@@ -55,18 +55,18 @@ class TestRenamer(unittest.TestCase):
         self.assertEqual(test[5].groups(), ("作者", "タイトル_2", "exp"))
 
     def test_get_old_filenames(self):
-        test = renamer.get_old_filenames(self.files, self.matches)
+        test = emang.get_old_filenames(self.files, self.matches)
         self.assertEqual(test, self.olds)
 
     def test_get_filename_parts(self):
         pattern = re.compile(r"\[(.*)\](.*)\.(.*)")
         filename = "[作者]タイトル_2.exp"
-        test = renamer.get_filename_parts(re.match(pattern, filename))
+        test = emang.get_filename_parts(re.match(pattern, filename))
         expect = "作者", "タイトル", "exp"
         self.assertEqual(test, expect)
 
     def test_compose_new_filenames(self):
-        test = renamer.compose_new_filenames(self.matches)
+        test = emang.compose_new_filenames(self.matches)
         expect = [
                 "author - title.exp",
                 "author - title.exp",
