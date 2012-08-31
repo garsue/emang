@@ -3,8 +3,8 @@
 
 from setuptools import setup, find_packages
 setup(
-        name = "emang",
-        version = "1.2",
-        packages = find_packages(),
-        scripts = ["emang"]
+        name="emang",
+        version="1.3",
+        packages=find_packages(),
+        scripts=["emang"],
         )
