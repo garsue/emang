@@ -4,7 +4,7 @@
 import os
 from os import path
 import re
-from functools import partial, wraps
+from functools import partial, wraps, reduce
 from itertools import compress
 
 
@@ -62,9 +62,6 @@ def require_confirm(f):
     return decorated
 
 
-@check_existence
-@list_up
-@require_confirm
 def execute(to_abspath, olds, news):
     rename = lambda old, new: os.rename(to_abspath(old), to_abspath(new))
     return [rename(old, new) for old, new in zip(olds, news)]
@@ -77,5 +74,7 @@ if __name__ == "__main__":
     olds = get_old_filenames(files, matches)
     news = compose_new_filenames(matches)
     to_abspath = partial(path.join, curdir)
-    execute(to_abspath, olds, news)
+    sequence = [execute, require_confirm, list_up, check_existence]
+    secure_execute = reduce(lambda f, g: g(f), sequence)
+    secure_execute (to_abspath, olds, news)
     print("Done!")
