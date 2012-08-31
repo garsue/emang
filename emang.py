@@ -74,7 +74,7 @@ if __name__ == "__main__":
     olds = get_old_filenames(files, matches)
     news = compose_new_filenames(matches)
     to_abspath = partial(path.join, curdir)
-    sequence = [execute, require_confirm, list_up, check_existence]
-    secure_execute = reduce(lambda f, g: g(f), sequence)
-    secure_execute (to_abspath, olds, news)
+    decorators = [require_confirm, list_up, check_existence]
+    secure_execute = reduce(lambda f, deco: deco(f), decorators, execute)
+    secure_execute(to_abspath, olds, news)
     print("Done!")
