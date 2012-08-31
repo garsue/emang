@@ -33,6 +33,12 @@ class TestRenamer(unittest.TestCase):
             "[作者]タイトル.exp",
             "[作者]タイトル_2.exp",
             ]
+    news = [
+            "author - title.exp",
+            "author - title.exp",
+            "作者 - タイトル.exp",
+            "作者 - タイトル.exp",
+            ]
 
     def setUp(self):
         pass
@@ -67,13 +73,21 @@ class TestRenamer(unittest.TestCase):
 
     def test_compose_new_filenames(self):
         test = emang.compose_new_filenames(self.matches)
+        self.assertEqual(test, self.news)
+
+    def test_execute(self):
+        orignal = emang.os.rename
+        emang.os.rename = lambda x, y: (x, y)  #stub
+        to_abspath_dummy = lambda x: x
+        test = emang.execute(to_abspath_dummy, self.olds, self.news)
         expect = [
-                "author - title.exp",
-                "author - title.exp",
-                "作者 - タイトル.exp",
-                "作者 - タイトル.exp",
+                ("[author]title.exp", "author - title.exp"),
+                ("[author]title_2.exp", "author - title.exp"),
+                ("[作者]タイトル.exp", "作者 - タイトル.exp"),
+                ("[作者]タイトル_2.exp", "作者 - タイトル.exp"),
                 ]
         self.assertEqual(test, expect)
+        emang.os.rename = orignal
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)

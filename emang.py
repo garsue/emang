@@ -57,8 +57,7 @@ def require_confirm(f):
     def decorated(*args, **kwargs):
         ans = input("Do you want to rename? ('yes' or 'no'): ")
         if ans in ["y", "yes"]:
-            f(*args, **kwargs)
-            return print("Done!")
+            return f(*args, **kwargs)
         print("Canceled by user.")
     return decorated
 
@@ -68,7 +67,7 @@ def require_confirm(f):
 @require_confirm
 def execute(to_abspath, olds, news):
     rename = lambda old, new: os.rename(to_abspath(old), to_abspath(new))
-    [rename(old, new) for old, new in zip(olds, news)]
+    return [rename(old, new) for old, new in zip(olds, news)]
 
 
 if __name__ == "__main__":
@@ -79,3 +78,4 @@ if __name__ == "__main__":
     news = compose_new_filenames(matches)
     to_abspath = partial(path.join, curdir)
     execute(to_abspath, olds, news)
+    print("Done!")
