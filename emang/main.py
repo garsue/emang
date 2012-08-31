@@ -15,10 +15,10 @@ def dispatch(command):
     return commands.get(command, invalid_command)
 
 
-if __name__ == "__main__":
+def main():
     parser = argparse.ArgumentParser(description="Manage E-comic files.")
     parser.add_argument("command", metavar="COMMAND", type=str,
             help="Subcommand")
     args = parser.parse_args()
     execute_command = dispatch(args.command)
-    execute_command()
+    return execute_command()
