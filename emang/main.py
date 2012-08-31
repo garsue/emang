@@ -21,4 +21,5 @@ def main():
             help="Subcommand")
     args = parser.parse_args()
     execute_command = dispatch(args.command)
-    return execute_command()
+    execute_command()
+    return
