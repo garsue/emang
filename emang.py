@@ -41,7 +41,7 @@ def check_existence(f):
     return decorated
 
 
-def rename_or_not(f):
+def list_up(f):
     @wraps(f)
     def decorated(to_abspath, olds, news):
         if news:
@@ -63,7 +63,7 @@ def require_confirm(f):
 
 
 @check_existence
-@rename_or_not
+@list_up
 @require_confirm
 def execute(to_abspath, olds, news):
     rename = lambda old, new: os.rename(to_abspath(old), to_abspath(new))
