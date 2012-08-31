@@ -86,7 +86,7 @@ def done(olds, news):
 
 if __name__ == "__main__":
     curdir = path.abspath(os.curdir)
-    files = next(os.walk(curdir))[2]
+    files = os.listdir(curdir)
     matches = get_matche_results(files)
     olds = get_old_filenames(files, matches)
     news = compose_new_filenames(matches)
