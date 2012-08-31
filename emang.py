@@ -8,7 +8,7 @@ from functools import partial, wraps
 from itertools import compress
 
 
-def get_matches(files):
+def get_matche_results(files):
     # group(1): author, group(2): title, group(3): extension
     pattern = re.compile(r"\[(.*)\](.*)\.(.*)")
     return [re.match(pattern, n) for n in files]
@@ -74,7 +74,7 @@ def execute(to_abspath, olds, news):
 if __name__ == "__main__":
     curdir = path.abspath(os.curdir)
     files = next(os.walk(curdir))[2]
-    matches = get_matches(files)
+    matches = get_matche_results(files)
     olds = get_old_filenames(files, matches)
     news = compose_new_filenames(matches)
     to_abspath = partial(path.join, curdir)

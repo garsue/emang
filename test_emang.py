@@ -45,8 +45,8 @@ class TestRenamer(unittest.TestCase):
         expect = path.dirname(path.abspath(__file__))
         self.assertEqual(test, expect)
 
-    def test_get_matches(self):
-        test = emang.get_matches(self.files)
+    def test_get_matche_results(self):
+        test = emang.get_matche_results(self.files)
         self.assertIsNone(test[0])
         self.assertIsNone(test[1])
         self.assertEqual(test[2].groups(), ("author", "title", "exp"))
