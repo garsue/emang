@@ -84,7 +84,7 @@ def done(olds, news):
     return olds, news
 
 
-if __name__ == "__main__":
+def main():
     curdir = path.abspath(os.curdir)
     files = os.listdir(curdir)
     matches = get_matche_results(files)
@@ -98,4 +98,4 @@ if __name__ == "__main__":
             execute(to_abspath),
             done,
             ]
-    reduce(lambda args, f: f(*args), sequence, (olds, news))
+    return reduce(lambda args, f: f(*args), sequence, (olds, news))
