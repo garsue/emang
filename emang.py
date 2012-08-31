@@ -30,41 +30,58 @@ def compose_new_filenames(matches):
     return ["{0} - {1}.{2}".format(a, t, e) for a, t, e in filename_parts]
 
 
-def check_existence(f):
+def fail(f):
     @wraps(f)
-    def decorated(to_abspath, olds, news):
+    def decorated(olds, news, *args, **kwargs):
+        if (olds, news) == ([], []):
+            return [], []
+        return f(olds, news, *args, **kwargs)
+    return decorated
+
+
+def list_up(olds, news):
+    if news:
+        print("Rename to:")
+        [print("\t", old, "->", new) for old, new in zip(olds, news)]
+        return olds, news
+    print("Nothing to rename.")
+    return [], []
+
+
+def check_existence(to_abspath):
+    @fail
+    def curried(olds, news):
         existence = [(new, path.exists(to_abspath(new))) for new in news]
         if not any(exists for _, exists in existence):
-            return f(to_abspath, olds, news)
+            return olds, news
         print("Already existed: ")
         [print("\t", new) for new, exists in existence if exists]
-    return decorated
+        return [], []
+    return curried
 
 
-def list_up(f):
-    @wraps(f)
-    def decorated(to_abspath, olds, news):
-        if news:
-            print("Rename to:")
-            [print("\t", old, "->", new) for old, new in zip(olds, news)]
-            return f(to_abspath, olds, news)
-        print("Nothing to rename.")
-    return decorated
+@fail
+def require_confirm(olds, news):
+    ans = input("Do you want to rename? ('yes' or 'no'): ")
+    if ans in ["y", "yes"]:
+        return olds, news
+    print("Canceled by user.")
+    return [], []
 
 
-def require_confirm(f):
-    @wraps(f)
-    def decorated(*args, **kwargs):
-        ans = input("Do you want to rename? ('yes' or 'no'): ")
-        if ans in ["y", "yes"]:
-            return f(*args, **kwargs)
-        print("Canceled by user.")
-    return decorated
+def execute(to_abspath):
+    @fail
+    def curried(olds, news):
+        rename = lambda old, new: os.rename(to_abspath(old), to_abspath(new))
+        [rename(old, new) for old, new in zip(olds, news)]
+        return olds, news
+    return curried
 
 
-def execute(to_abspath, olds, news):
-    rename = lambda old, new: os.rename(to_abspath(old), to_abspath(new))
-    return [rename(old, new) for old, new in zip(olds, news)]
+@fail
+def done(olds, news):
+    print("Done!")
+    return olds, news
 
 
 if __name__ == "__main__":
@@ -74,7 +91,11 @@ if __name__ == "__main__":
     olds = get_old_filenames(files, matches)
     news = compose_new_filenames(matches)
     to_abspath = partial(path.join, curdir)
-    decorators = [require_confirm, list_up, check_existence]
-    secure_execute = reduce(lambda f, deco: deco(f), decorators, execute)
-    secure_execute(to_abspath, olds, news)
-    print("Done!")
+    sequence = [
+            list_up,
+            check_existence(to_abspath),
+            require_confirm,
+            execute(to_abspath),
+            done,
+            ]
+    reduce(lambda args, f: f(*args), sequence, (olds, news))

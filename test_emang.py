@@ -77,16 +77,10 @@ class TestRenamer(unittest.TestCase):
 
     def test_execute(self):
         orignal = emang.os.rename
-        emang.os.rename = lambda x, y: (x, y)  #stub
+        emang.os.rename = lambda x, y: (x, y)  # stub
         to_abspath_dummy = lambda x: x
-        test = emang.execute(to_abspath_dummy, self.olds, self.news)
-        expect = [
-                ("[author]title.exp", "author - title.exp"),
-                ("[author]title_2.exp", "author - title.exp"),
-                ("[作者]タイトル.exp", "作者 - タイトル.exp"),
-                ("[作者]タイトル_2.exp", "作者 - タイトル.exp"),
-                ]
-        self.assertEqual(test, expect)
+        test = emang.execute(to_abspath_dummy)(self.olds, self.news)
+        self.assertEqual(test, (self.olds, self.news))
         emang.os.rename = orignal
 
 if __name__ == '__main__':
