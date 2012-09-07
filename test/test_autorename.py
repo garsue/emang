@@ -2,8 +2,6 @@
 #vim: fileencoding=utf-8
 
 import unittest
-import os
-from os import path
 import re
 
 from emang import autorename
@@ -70,13 +68,6 @@ class TestAutoRename(unittest.TestCase):
         test = autorename.compose_new_filenames(self.matches)
         self.assertEqual(test, self.news)
 
-    def test_execute(self):
-        orignal = autorename.os.rename
-        autorename.os.rename = lambda x, y: (x, y)  # stub
-        to_abspath_dummy = lambda x: x
-        test = autorename.execute(to_abspath_dummy)(self.olds, self.news)
-        self.assertEqual(test, (self.olds, self.news))
-        autorename.os.rename = orignal
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)
