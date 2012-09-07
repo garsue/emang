@@ -4,3 +4,5 @@ TODO
 .tox
 junit-*.xml
 .coverage
+build
+dist
