@@ -10,33 +10,29 @@ from emang import autorename
 class TestAutoRename(unittest.TestCase):
     pattern = re.compile(r"\[(.*)\](.*)\.(.*)")
     files = [
-            "spam1",
-            "spam2",
-            "[author]title.exp",
-            "[author]title_2.exp",
-            "[作者]タイトル.exp",
-            "[作者]タイトル_2.exp",
-            ]
+        "spam1",
+        "spam2",
+        "[author]title.exp",
+        "[author]title_2.exp",
+        "[作者]タイトル.exp",
+        "[作者]タイトル_2.exp"]
     matches = [
-            None,
-            None,
-            re.match(pattern, "[author]title.exp"),
-            re.match(pattern, "[author]title_2.exp"),
-            re.match(pattern, "[作者]タイトル.exp"),
-            re.match(pattern, "[作者]タイトル_2.exp"),
-            ]
+        None,
+        None,
+        re.match(pattern, "[author]title.exp"),
+        re.match(pattern, "[author]title_2.exp"),
+        re.match(pattern, "[作者]タイトル.exp"),
+        re.match(pattern, "[作者]タイトル_2.exp")]
     olds = [
-            "[author]title.exp",
-            "[author]title_2.exp",
-            "[作者]タイトル.exp",
-            "[作者]タイトル_2.exp",
-            ]
+        "[author]title.exp",
+        "[author]title_2.exp",
+        "[作者]タイトル.exp",
+        "[作者]タイトル_2.exp"]
     news = [
-            "author - title.exp",
-            "author - title.exp",
-            "作者 - タイトル.exp",
-            "作者 - タイトル.exp",
-            ]
+        "author - title.exp",
+        "author - title.exp",
+        "作者 - タイトル.exp",
+        "作者 - タイトル.exp"]
 
     def setUp(self):
         pass

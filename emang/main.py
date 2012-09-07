@@ -17,8 +17,8 @@ def dispatch(command):
 
 def main():
     parser = argparse.ArgumentParser(description="Manage E-comic files.")
-    parser.add_argument("command", metavar="COMMAND", type=str,
-            help="Subcommand")
+    parser.add_argument(
+        "command", metavar="COMMAND", type=str, help="Subcommand")
     args = parser.parse_args()
     execute_command = dispatch(args.command)
     execute_command()

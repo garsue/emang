@@ -42,11 +42,10 @@ def main():
     files = common.get_files()
     filename_tuples = to_filename_tuples(files)
     sequence = [
-            common.list_up,
-            common.check_old_existence,
-            common.check_new_existence,
-            common.require_confirm,
-            common.execute_rename,
-            common.done,
-            ]
+        common.list_up,
+        common.check_old_existence,
+        common.check_new_existence,
+        common.require_confirm,
+        common.execute_rename,
+        common.done]
     return reduce(lambda acc, f: f(acc), sequence, filename_tuples)

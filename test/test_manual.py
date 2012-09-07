@@ -8,11 +8,10 @@ from emang import manual
 
 class TestManual(unittest.TestCase):
     files = [
-            "spam1",
-            "spam2",
-            "[author]title.exp",
-            "[作者]タイトル.exp",
-            ]
+        "spam1",
+        "spam2",
+        "[author]title.exp",
+        "[作者]タイトル.exp"]
 
     def setUp(self):
         pass
@@ -49,9 +48,8 @@ old: [作者]タイトル.exp
 new: 作者 - タイトル.exp"""
         test = manual.to_tuples(rename_table)
         expect = [
-                ("[author]title.exp", "author - title.exp"),
-                ("[作者]タイトル.exp", "作者 - タイトル.exp"),
-                ]
+            ("[author]title.exp", "author - title.exp"),
+            ("[作者]タイトル.exp", "作者 - タイトル.exp")]
         self.assertEqual(test, expect)
 
 

@@ -37,10 +37,9 @@ def main():
     news = compose_new_filenames(matches)
     filename_tuples = list(zip(olds, news))
     sequence = [
-            common.list_up,
-            common.check_new_existence,
-            common.require_confirm,
-            common.execute_rename,
-            common.done,
-            ]
+        common.list_up,
+        common.check_new_existence,
+        common.require_confirm,
+        common.execute_rename,
+        common.done]
     return reduce(lambda acc, f: f(acc), sequence, filename_tuples)
