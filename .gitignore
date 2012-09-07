@@ -1,3 +1,6 @@
-note
-emang.tar.gz
+TODO
 *.egg-info
+.cache
+.tox
+junit-*.xml
+.coverage
