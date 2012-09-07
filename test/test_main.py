@@ -5,6 +5,7 @@ import unittest
 
 from emang import main
 
+
 class TestMain(unittest.TestCase):
     def test_invalid_command(self):
         self.assertIsNone(main.invalid_command())
