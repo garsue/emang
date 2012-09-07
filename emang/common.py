@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 #vim: fileencoding=utf-8
 
+from __future__ import print_function, unicode_literals
 from functools import partial, wraps
 import os
 from os import path
