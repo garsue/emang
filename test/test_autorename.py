@@ -63,7 +63,3 @@ class TestAutoRename(unittest.TestCase):
     def test_compose_new_filenames(self):
         test = autorename.compose_new_filenames(self.matches)
         self.assertEqual(test, self.news)
-
-
-if __name__ == '__main__':
-    unittest.main(verbosity=2)

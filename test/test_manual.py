@@ -51,7 +51,3 @@ new: 作者 - タイトル.exp"""
             ("[author]title.exp", "author - title.exp"),
             ("[作者]タイトル.exp", "作者 - タイトル.exp")]
         self.assertEqual(test, expect)
-
-
-if __name__ == '__main__':
-    unittest.main(verbosity=2)
