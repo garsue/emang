@@ -43,4 +43,4 @@ def main():
             common.execute_rename,
             common.done,
             ]
-    return reduce(lambda args, f: f(*args), sequence, filename_tuples)
+    return reduce(lambda acc, f: f(acc), sequence, filename_tuples)
