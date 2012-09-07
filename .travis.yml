@@ -2,6 +2,6 @@ language: python
 python:
   - "3.2"
 # command to install dependencies
-install: "pip install --use-mirrors pep8"
+install: "pip install -r requirements.txt --use-mirrors pep8"
 # command to run tests
-script: python setup.py test
+script: tox -e py32
