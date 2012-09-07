@@ -35,7 +35,7 @@ def main():
     matches = get_matche_results(files)
     olds = get_old_filenames(files, matches)
     news = compose_new_filenames(matches)
-    filename_tuples = zip(olds, news)
+    filename_tuples = list(zip(olds, news))
     sequence = [
             common.list_up,
             common.check_new_existence,
