@@ -3,7 +3,7 @@
 
 import argparse
 
-from . import autorename
+from . import autorename, manual
 
 
 def invalid_command():
@@ -11,7 +11,7 @@ def invalid_command():
 
 
 def dispatch(command):
-    commands = {"autorename": autorename.main}
+    commands = {"autorename": autorename.main, "manual": manual.main}
     return commands.get(command, invalid_command)
 
 
