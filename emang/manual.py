@@ -26,7 +26,7 @@ def to_filename_tuples(files):
         rename_table_file.flush()
         subprocess.call([editor, rename_table_file.name])
         with open(rename_table_file.name) as read_only:
-            rename_table = read_only.readlines()
+            rename_table = [ln.rstrip("\n") for ln in read_only.readlines()]
     return to_tuples(rename_table)
 
 
