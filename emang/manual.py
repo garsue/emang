@@ -10,23 +10,31 @@ from . import common
 
 
 def build_tempfile_body(files):
-    return "\n".join(n + "\t" + n for n in files)
+    template = "old: {0}\nnew: {1}"
+    return "\n\n".join(template.format(n, n) for n in files)
+
+
+def to_pair(block):
+    old, new = tuple(block.split("\n")[:2])
+    old = old.replace("old: ", "", 1).rstrip("\n")
+    new = new.replace("new: ", "", 1).rstrip("\n")
+    return old, new
 
 
 def to_tuples(rename_table):
-    tuples = [tuple(ln.split("\t")) for ln in rename_table]
+    tuples = [to_pair(block) for block in rename_table.split("\n\n")]
     return [(old, new) for old, new in tuples if old != new]
 
 
 def to_filename_tuples(files):
-    editor = os.environ.get('EDITOR', 'vim')
+    editor = os.environ.get("EDITOR", "vim")
     tempfile_body = build_tempfile_body(files)
     with tempfile.NamedTemporaryFile() as rename_table_file:
         rename_table_file.write(bytes(tempfile_body, "utf8"))
         rename_table_file.flush()
         subprocess.call([editor, rename_table_file.name])
         with open(rename_table_file.name) as read_only:
-            rename_table = [ln.rstrip("\n") for ln in read_only.readlines()]
+            rename_table = read_only.read()
     return to_tuples(rename_table)
 
 
