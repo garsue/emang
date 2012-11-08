@@ -22,7 +22,7 @@ def get_old_filenames(files, matches):
 def get_filename_parts(match):
     """Return (author, title, extension)"""
     author, title, extension = match.group(1), match.group(2), match.group(3)
-    title = title[:-2] if title.endswith("_2") else title
+    title = title[:-2] if title.endswith("_", 0, -1) else title
     return author, title, extension
 
 

@@ -56,7 +56,7 @@ class TestAutoRename(unittest.TestCase):
 
     def test_get_filename_parts(self):
         pattern = re.compile(r"\[(.*)\](.*)\.(.*)")
-        filename = "[作者]タイトル_2.exp"
+        filename = "[作者]タイトル_3.exp"
         test = autorename.get_filename_parts(re.match(pattern, filename))
         expect = "作者", "タイトル", "exp"
         self.assertEqual(test, expect)
