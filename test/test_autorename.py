@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 #vim: fileencoding=utf-8
 
+from __future__ import print_function, unicode_literals
 import unittest
 import re
 

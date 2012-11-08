@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 #vim: fileencoding=utf-8
 
+from __future__ import print_function, unicode_literals
 import os
 import tempfile
 import subprocess
@@ -30,12 +31,13 @@ def to_filename_tuples(files):
     editor = os.environ.get("EDITOR", "vim")
     tempfile_body = build_tempfile_body(files)
     with tempfile.NamedTemporaryFile() as rename_table_file:
-        rename_table_file.write(bytes(tempfile_body, "utf8"))
+        rename_table_file.write(tempfile_body.encode("utf8"))
         rename_table_file.flush()
         subprocess.call([editor, rename_table_file.name])
         with open(rename_table_file.name) as read_only:
             rename_table = read_only.read()
-    return to_tuples(rename_table)
+    i = lambda _: rename_table
+    return to_tuples(getattr(rename_table, "decode", i)("utf8"))
 
 
 def main():

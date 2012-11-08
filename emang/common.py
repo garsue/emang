@@ -11,9 +11,15 @@ curdir = path.abspath(os.curdir)
 to_abspath = partial(path.join, curdir)
 
 
+def decode(string):
+    if getattr(string, "decode", False):
+        return string.decode('utf8')
+    return string
+
+
 def get_files():
     not_dotfile = lambda name: path.isfile(name) and not name.startswith(".")
-    return [n for n in os.listdir(curdir) if not_dotfile(n)]
+    return [n for n in map(decode, os.listdir(curdir)) if not_dotfile(n)]
 
 
 def fail(f):
@@ -34,7 +40,7 @@ def list_up(filename_tuples):
 
 @fail
 def require_confirm(filename_tuples):
-    ans = input("Do you want to rename? ('yes' or 'no'): ")
+    ans = raw_input("Do you want to rename? ('yes' or 'no'): ")
     if ans in ["y", "yes"]:
         return filename_tuples
     print("Canceled by user.")
