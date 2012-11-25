@@ -22,6 +22,12 @@ class TestCommon(unittest.TestCase):
     def setUp(self):
         pass
 
+    def test_decode(self):
+        test = common.decode("すぱむ")
+        self.assertEqual(test, "すぱむ")
+        common.decode("すぱむ".encode("utf8"))
+        self.assertEqual(test, "すぱむ")
+
     def tearDown(self):
         common.path.isfile = self.orignal.path.isfile
         common.os.listdir = self.orignal.os.listdir

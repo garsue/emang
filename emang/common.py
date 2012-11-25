@@ -12,7 +12,13 @@ to_abspath = partial(path.join, curdir)
 
 
 def decode(string):
-    return string.decode("utf8") if getattr(string, "decode", None) else string
+    attrs = dir(string)
+    isdecodable = "decode" in attrs
+    isencodable = "encode" in attrs
+    isstr = isinstance(string, str)
+    if isdecodable and (isencodable is isstr):
+        return string.decode("utf8")
+    return string
 
 
 def get_files():
