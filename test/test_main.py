@@ -11,9 +11,9 @@ import site
 
 class TestMain(unittest.TestCase):
     def test_invalid_command(self):
-        with patch(site.builtins.__name__ + ".print") as m:
+        with patch(site.builtins.__name__ + ".print") as mock:
             main.invalid_command()
-            args, _ = m.call_args
+            args, _ = mock.call_args
             self.assertEqual(args[0], "No such a command")
 
     def test_dispatch(self):
