@@ -1,14 +1,19 @@
 #!/usr/bin/env python
 #vim: fileencoding=utf-8
 
+from __future__ import print_function, unicode_literals
 import unittest
 
+from mock import patch
 from emang import main
 
 
 class TestMain(unittest.TestCase):
     def test_invalid_command(self):
-        self.assertIsNone(main.invalid_command())
+        with patch("__builtin__.print") as m:
+            main.invalid_command()
+            args, _ = m.call_args
+            self.assertEqual(args[0], "No such command")
 
     def test_dispatch(self):
         test = main.dispatch("autorename")
