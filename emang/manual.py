@@ -36,8 +36,8 @@ def to_filename_tuples(files):
         subprocess.call([editor, rename_table_file.name])
         with open(rename_table_file.name) as read_only:
             rename_table = read_only.read()
-    i = lambda _: rename_table
-    return to_tuples(getattr(rename_table, "decode", i)("utf8"))
+    not_to_decode = lambda _: rename_table
+    return to_tuples(getattr(rename_table, "decode", not_to_decode)("utf8"))
 
 
 def main():
