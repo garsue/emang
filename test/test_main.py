@@ -13,7 +13,7 @@ class TestMain(unittest.TestCase):
         with patch("__builtin__.print") as m:
             main.invalid_command()
             args, _ = m.call_args
-            self.assertEqual(args[0], "No such command")
+            self.assertEqual(args[0], "No such a command")
 
     def test_dispatch(self):
         test = main.dispatch("autorename")

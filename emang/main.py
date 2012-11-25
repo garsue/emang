@@ -8,7 +8,7 @@ from . import autorename, manual
 
 
 def invalid_command():
-    return print("No such command")
+    return print("No such a command")
 
 
 def dispatch(command):
