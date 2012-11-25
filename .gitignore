@@ -6,3 +6,4 @@ junit-*.xml
 .coverage
 build
 dist
+htmlcov
