@@ -40,6 +40,21 @@ class TestCommon(unittest.TestCase):
         self.assertEqual(func([]), [])
         self.assertEqual(func([("spam",)]), [("spam",)])
 
+    def test_list_up(self):
+        with patch("site.builtins.print") as mock_print:
+            test = common.list_up(self.filename_tuples)
+            calls = [
+                call("Rename to:"),
+                call("\t", "[author]title.exp", "->", "author - title.exp"),
+                call("\t", "[author]title_2.exp", "->", "author - title.exp"),
+                call("\t", "[作者]タイトル.exp", "->", "作者 - タイトル.exp"),
+                call("\t", "[作者]タイトル_2.exp", "->", "作者 - タイトル.exp")]
+            mock_print.assert_has_calls(calls)
+            self.assertEqual(test, self.filename_tuples)
+            test = common.list_up([])
+            mock_print.assert_called_with("Nothing to rename.")
+            self.assertEqual(test, [])
+
     def test_execute_rename(self):
         with patch(
                 "emang.common.to_abspath"
