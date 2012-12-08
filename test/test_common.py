@@ -9,6 +9,12 @@ from emang import common
 
 
 class TestCommon(unittest.TestCase):
+    filename_tuples = [
+        ("[author]title.exp", "author - title.exp"),
+        ("[author]title_2.exp", "author - title.exp"),
+        ("[作者]タイトル.exp", "作者 - タイトル.exp"),
+        ("[作者]タイトル_2.exp", "作者 - タイトル.exp")]
+
     def test_decode(self):
         test = common.decode("すぱむ")
         self.assertEqual(test, "すぱむ")
@@ -40,9 +46,12 @@ class TestCommon(unittest.TestCase):
         ) as mock_to_abspath, patch(
                 "emang.common.os.rename"
         ) as mock_os_rename:
-            sample = [(1, "a"), (2, "b")]
-            test = common.execute_rename(sample)
-            calls = [call(1), call("a"), call(2), call("b")]
+            test = common.execute_rename(self.filename_tuples)
+            calls = [
+                call("[author]title.exp"), call("author - title.exp"),
+                call("[author]title_2.exp"), call("author - title.exp"),
+                call("[作者]タイトル.exp"), call("作者 - タイトル.exp"),
+                call("[作者]タイトル_2.exp"), call("作者 - タイトル.exp")]
             mock_to_abspath.assert_has_calls(calls)
             calls = [
                 call(
@@ -52,4 +61,4 @@ class TestCommon(unittest.TestCase):
                     mock_to_abspath.return_value, mock_to_abspath.return_value
                 )]
             mock_os_rename.assert_has_calls(calls)
-            self.assertEqual(test, sample)
+            self.assertEqual(test, self.filename_tuples)
