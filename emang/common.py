@@ -107,7 +107,6 @@ def read_file(filename):
 
 def edit_rename_table(rename_table_body):
     with tempfile.NamedTemporaryFile() as rename_table_file:
-        print(dir(rename_table_file))
         rename_table_file.write(rename_table_body.encode("utf8"))
         rename_table_file.flush()
         call_editor(rename_table_file.name)
