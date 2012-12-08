@@ -1,7 +1,9 @@
 language: python
 python:
+  - "2.7"
   - "3.2"
+  - "3.3"
 # command to install dependencies
 install: "pip install -r requirements.txt --use-mirrors pep8"
 # command to run tests
-script: tox -e py32
+script: tox
