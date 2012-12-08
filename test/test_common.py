@@ -86,6 +86,26 @@ class TestCommon(unittest.TestCase):
             mock_exists.assert_called_with(mock_to_abspath.return_value)
             self.assertEqual(test, ("spam", mock_exists.return_value))
 
+    def test_check_old_existence(self):
+        side_effect = [(old, True) for old, _ in self.filename_tuples]
+        with patch("emang.common.exists_pair", side_effect=side_effect):
+            test = common.check_old_existence(self.filename_tuples)
+            self.assertEqual(test, self.filename_tuples)
+        side_effect[0] = (self.filename_tuples[0][0], False)
+        side_effect[-1] = (self.filename_tuples[-1][0], False)
+        with patch(
+            "emang.common.exists_pair", side_effect=side_effect
+        ), patch(
+            "site.builtins.print"
+        ) as mock_print:
+            test = common.check_old_existence(self.filename_tuples)
+            calls = [
+                call("Not existing source file(s):"),
+                call("\t", self.filename_tuples[0][0]),
+                call("\t", self.filename_tuples[-1][0])]
+            mock_print.assert_has_calls(calls)
+            self.assertEqual(test, [])
+
     def test_execute_rename(self):
         with patch(
                 "emang.common.to_abspath"
