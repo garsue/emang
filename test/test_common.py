@@ -74,6 +74,18 @@ class TestCommon(unittest.TestCase):
             mock_print.assert_called_with("Canceled by user.")
             self.assertEqual(test, [])
 
+    def test_exists_pair(self):
+        name = "spam"
+        with patch(
+            "emang.common.to_abspath"
+        ) as mock_to_abspath, patch(
+            "emang.common.path.exists"
+        ) as mock_exists:
+            test = common.exists_pair(name)
+            mock_to_abspath.assert_called_with(name)
+            mock_exists.assert_called_with(mock_to_abspath.return_value)
+            self.assertEqual(test, ("spam", mock_exists.return_value))
+
     def test_execute_rename(self):
         with patch(
                 "emang.common.to_abspath"
