@@ -148,3 +148,9 @@ class TestCommon(unittest.TestCase):
                 )]
             mock_os_rename.assert_has_calls(calls)
             self.assertEqual(test, self.filename_tuples)
+
+    def test_done(self):
+        with patch("site.builtins.print") as mock_print:
+            test = common.done(self.filename_tuples)
+            mock_print.assert_called_once_with("Done!")
+            self.assertEqual(test, self.filename_tuples)
