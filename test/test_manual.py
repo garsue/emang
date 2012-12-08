@@ -3,10 +3,9 @@
 
 from __future__ import print_function, unicode_literals
 import unittest
-import site
 import io
 
-from mock import patch
+from mock import patch, Mock
 from emang import manual
 
 
@@ -58,14 +57,27 @@ new: 作者 - タイトル.exp"""
         self.assertEqual(test, expect)
 
     def test_to_filename_tuples(self):
-        with patch("subprocess.call"):
-            test = manual.to_filename_tuples(self.files)
-            self.assertEqual(test, [])
-        open_name = site.builtins.__name__ + ".open"
-        config = {"return_value": io.BytesIO(self.rename_table.encode("utf8"))}
-        with patch("subprocess.call"), patch(open_name, **config):
-            test = manual.to_filename_tuples(self.files)
-            expect = [
-                ("[author]title.exp", "author - title.exp"),
-                ("[作者]タイトル.exp", "作者 - タイトル.exp")]
-            self.assertEqual(test, expect)
+        with patch("emang.manual.os.environ.get", return_value="some_editor"):
+            mock_rename_table_file = Mock()
+            with patch(
+                "emang.manual.tempfile.NamedTemporaryFile",
+                **{("return_value."
+                    "__enter__."
+                    "return_value"): mock_rename_table_file}
+            ), patch(
+                "emang.manual.subprocess.call"
+            ) as mock_subprocess_call, patch(
+                "site.builtins.open",
+                return_value=io.BytesIO(self.rename_table.encode("utf8"))
+            ) as mock_open:
+                test = manual.to_filename_tuples(self.files)
+                mock_rename_table_file.write.assert_called_with(
+                    self.tempfile_body.encode("utf8"))
+                mock_rename_table_file.flush.assert_called_with()
+                mock_subprocess_call.assert_called_with(
+                    ["some_editor", mock_rename_table_file.name])
+                mock_open.assert_called_with(mock_rename_table_file.name)
+                expect = [
+                    ("[author]title.exp", "author - title.exp"),
+                    ("[作者]タイトル.exp", "作者 - タイトル.exp")]
+                self.assertEqual(test, expect)
