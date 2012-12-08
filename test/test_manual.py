@@ -81,3 +81,23 @@ new: 作者 - タイトル.exp"""
                     ("[author]title.exp", "author - title.exp"),
                     ("[作者]タイトル.exp", "作者 - タイトル.exp")]
                 self.assertEqual(test, expect)
+
+    def test_main(self):
+        filename_tuples = [
+            ("[author]title.exp", "author - title.exp"),
+            ("[作者]タイトル.exp", "作者 - タイトル.exp")]
+        attrs = {
+            "get_files.return_value": self.files,
+            "list_up.return_value": filename_tuples,
+            "check_old_existence.return_value": filename_tuples,
+            "check_new_existence.return_value": filename_tuples,
+            "require_confirm.return_value": filename_tuples,
+            "execute_rename.return_value": filename_tuples,
+            "done.return_value": filename_tuples}
+        with patch(
+            "emang.manual.to_filename_tuples", return_value=filename_tuples
+        ), patch(
+            "emang.manual.common", **attrs
+        ):
+            test = manual.main()
+            self.assertEqual(test, filename_tuples)
