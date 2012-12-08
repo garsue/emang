@@ -7,20 +7,20 @@ import argparse
 from . import autorename, manual
 
 
-def invalid_command():
-    return print("No such a command")
-
-
-def dispatch(command):
-    commands = {"autorename": autorename.main, "manual": manual.main}
-    return commands.get(command, invalid_command)
+def get_args(commands):
+    parser = argparse.ArgumentParser(description="Manage E-comic files.")
+    subparsers = parser.add_subparsers(title="subcommands")
+    for command_name, description, main_function in commands:
+        subparser = subparsers.add_parser(
+            command_name, description=description)
+        subparser.set_defaults(func=main_function)
+    return parser.parse_args()
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Manage E-comic files.")
-    parser.add_argument(
-        "command", metavar="COMMAND", type=str, help="Subcommand")
-    args = parser.parse_args()
-    execute_command = dispatch(args.command)
-    execute_command()
+    commands = [
+        ("autorename", "rename automatically", autorename.main),
+        ("manual", "rename manually with default editor", manual.main)]
+    args = get_args(commands)
+    args.func()
     return
