@@ -106,6 +106,26 @@ class TestCommon(unittest.TestCase):
             mock_print.assert_has_calls(calls)
             self.assertEqual(test, [])
 
+    def test_check_new_existence(self):
+        side_effect = [(new, False) for _, new in self.filename_tuples]
+        with patch("emang.common.exists_pair", side_effect=side_effect):
+            test = common.check_new_existence(self.filename_tuples)
+            self.assertEqual(test, self.filename_tuples)
+        side_effect[0] = (self.filename_tuples[0][0], True)
+        side_effect[-1] = (self.filename_tuples[-1][0], True)
+        with patch(
+            "emang.common.exists_pair", side_effect=side_effect
+        ), patch(
+            "site.builtins.print"
+        ) as mock_print:
+            test = common.check_new_existence(self.filename_tuples)
+            calls = [
+                call("Already existed destination file(s):"),
+                call("\t", self.filename_tuples[0][0]),
+                call("\t", self.filename_tuples[-1][0])]
+            mock_print.assert_has_calls(calls)
+            self.assertEqual(test, [])
+
     def test_execute_rename(self):
         with patch(
                 "emang.common.to_abspath"

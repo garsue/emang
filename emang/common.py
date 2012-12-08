@@ -71,7 +71,7 @@ def check_old_existence(filename_tuples):
 def check_new_existence(filename_tuples):
     new_existence = [exists_pair(new) for _, new in filename_tuples]
     if any(exists for _, exists in new_existence):
-        print("Already existed destination file(s): ")
+        print("Already existed destination file(s):")
         [print("\t", new) for new, exists in new_existence if exists]
         return []
     return filename_tuples
