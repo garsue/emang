@@ -2,15 +2,12 @@
 #vim: fileencoding=utf-8
 
 from __future__ import print_function, unicode_literals
-import os
-import tempfile
-import subprocess
 from functools import reduce
 
 from . import common
 
 
-def build_tempfile_body(files):
+def build_rename_table_body(files):
     template = "old: {0}\nnew: {1}"
     return "\n\n".join(template.format(n, n) for n in files)
 
@@ -27,21 +24,11 @@ def to_tuples(rename_table):
     return [(old, new) for old, new in tuples if old != new]
 
 
-def to_filename_tuples(files):
-    editor = os.environ.get("EDITOR", "vim")
-    tempfile_body = build_tempfile_body(files)
-    with tempfile.NamedTemporaryFile() as rename_table_file:
-        rename_table_file.write(tempfile_body.encode("utf8"))
-        rename_table_file.flush()
-        subprocess.call([editor, rename_table_file.name])
-        with open(rename_table_file.name) as read_only:
-            rename_table = read_only.read()
-    return to_tuples(common.decode(rename_table))
-
-
 def main():
     files = common.get_files()
-    filename_tuples = to_filename_tuples(files)
+    rename_table_body = build_rename_table_body(files)
+    edited_rename_table = common.edit_rename_table(rename_table_body)
+    filename_tuples = to_tuples(edited_rename_table)
     sequence = [
         common.list_up,
         common.check_old_existence,

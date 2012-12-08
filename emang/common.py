@@ -5,8 +5,10 @@ from __future__ import print_function, unicode_literals
 from functools import partial, wraps
 import os
 from os import path
-import site
-input = getattr(site.builtins, "raw_input", input)
+import subprocess
+import tempfile
+
+from . import utils
 
 
 curdir = path.abspath(os.curdir)
@@ -88,3 +90,24 @@ def execute_rename(filename_tuples):
 def done(tuples):
     print("Done!")
     return tuples
+
+
+def call_editor(filename):
+    editor = os.environ.get("EDITOR", "vim")
+    subprocess.call([editor, filename])
+    return
+
+
+def read_file(filename):
+    with open(filename) as f:
+        return f.read()
+
+
+def edit_rename_table(rename_table_body):
+    with tempfile.NamedTemporaryFile() as rename_table_file:
+        print(dir(rename_table_file))
+        rename_table_file.write(rename_table_body.encode("utf8"))
+        rename_table_file.flush()
+        call_editor(rename_table_file.name)
+        rename_table = read_file(rename_table_file.name)
+    return utils.decode(rename_table)

@@ -3,9 +3,8 @@
 
 from __future__ import print_function, unicode_literals
 import unittest
-import io
 
-from mock import patch, Mock
+from mock import patch
 from emang import manual
 
 
@@ -16,7 +15,7 @@ class TestManual(unittest.TestCase):
         "[author]title.exp",
         "[作者]タイトル.exp"]
 
-    tempfile_body = """old: spam1
+    rename_table_body = """old: spam1
 new: spam1
 
 old: spam2
@@ -27,7 +26,7 @@ new: [author]title.exp
 
 old: [作者]タイトル.exp
 new: [作者]タイトル.exp"""
-    rename_table = """old: spam1
+    edited_rename_table = """old: spam1
 new: spam1
 
 old: spam2
@@ -39,48 +38,16 @@ new: author - title.exp
 old: [作者]タイトル.exp
 new: 作者 - タイトル.exp"""
 
-    def setUp(self):
-        pass
-
-    def tearDown(self):
-        pass
-
-    def test_build_tempfile_body(self):
-        test = manual.build_tempfile_body(self.files)
-        self.assertEqual(test, self.tempfile_body)
+    def test_build_rename_table_body(self):
+        test = manual.build_rename_table_body(self.files)
+        self.assertEqual(test, self.rename_table_body)
 
     def test_to_tuples(self):
-        test = manual.to_tuples(self.rename_table)
+        test = manual.to_tuples(self.edited_rename_table)
         expect = [
             ("[author]title.exp", "author - title.exp"),
             ("[作者]タイトル.exp", "作者 - タイトル.exp")]
         self.assertEqual(test, expect)
-
-    def test_to_filename_tuples(self):
-        with patch("emang.manual.os.environ.get", return_value="some_editor"):
-            mock_rename_table_file = Mock()
-            with patch(
-                "emang.manual.tempfile.NamedTemporaryFile",
-                **{("return_value."
-                    "__enter__."
-                    "return_value"): mock_rename_table_file}
-            ), patch(
-                "emang.manual.subprocess.call"
-            ) as mock_subprocess_call, patch(
-                "site.builtins.open",
-                return_value=io.BytesIO(self.rename_table.encode("utf8"))
-            ) as mock_open:
-                test = manual.to_filename_tuples(self.files)
-                mock_rename_table_file.write.assert_called_with(
-                    self.tempfile_body.encode("utf8"))
-                mock_rename_table_file.flush.assert_called_with()
-                mock_subprocess_call.assert_called_with(
-                    ["some_editor", mock_rename_table_file.name])
-                mock_open.assert_called_with(mock_rename_table_file.name)
-                expect = [
-                    ("[author]title.exp", "author - title.exp"),
-                    ("[作者]タイトル.exp", "作者 - タイトル.exp")]
-                self.assertEqual(test, expect)
 
     def test_main(self):
         filename_tuples = [
@@ -88,16 +55,13 @@ new: 作者 - タイトル.exp"""
             ("[作者]タイトル.exp", "作者 - タイトル.exp")]
         attrs = {
             "get_files.return_value": self.files,
+            "edited_content.return_value": self.edited_rename_table,
             "list_up.return_value": filename_tuples,
             "check_old_existence.return_value": filename_tuples,
             "check_new_existence.return_value": filename_tuples,
             "require_confirm.return_value": filename_tuples,
             "execute_rename.return_value": filename_tuples,
             "done.return_value": filename_tuples}
-        with patch(
-            "emang.manual.to_filename_tuples", return_value=filename_tuples
-        ), patch(
-            "emang.manual.common", **attrs
-        ):
+        with patch("emang.manual.common", **attrs):
             test = manual.main()
             self.assertEqual(test, filename_tuples)

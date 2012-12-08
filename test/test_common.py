@@ -4,6 +4,7 @@
 from __future__ import print_function, unicode_literals
 import unittest
 from mock import patch, call
+import io
 
 from emang import common
 
@@ -14,6 +15,29 @@ class TestCommon(unittest.TestCase):
         ("[author]title_2.exp", "author - title.exp"),
         ("[作者]タイトル.exp", "作者 - タイトル.exp"),
         ("[作者]タイトル_2.exp", "作者 - タイトル.exp")]
+    filename = "spam"
+    file_content = """old: spam1
+new: spam1
+
+old: spam2
+new: spam2
+
+old: [author]title.exp
+new: [author]title.exp
+
+old: [作者]タイトル.exp
+new: [作者]タイトル.exp"""
+    edited_content = """old: spam1
+new: spam1
+
+old: spam2
+new: spam2
+
+old: [author]title.exp
+new: author - title.exp
+
+old: [作者]タイトル.exp
+new: 作者 - タイトル.exp""".encode("utf8")
 
     def test_decode(self):
         test = common.decode("すぱむ")
@@ -154,3 +178,39 @@ class TestCommon(unittest.TestCase):
             test = common.done(self.filename_tuples)
             mock_print.assert_called_once_with("Done!")
             self.assertEqual(test, self.filename_tuples)
+
+    def test_call_editor(self):
+        with patch(
+            "emang.common.os.environ.get", return_value="vim"
+        ), patch(
+            "emang.common.subprocess.call"
+        ) as mock_call:
+            common.call_editor(self.filename)
+            mock_call.assert_called_once_with(["vim", self.filename])
+
+    def test_read_file(self):
+        with patch(
+            "site.builtins.open",
+            return_value=io.BytesIO(self.edited_content)
+        ):
+            test = common.read_file(self.filename)
+            self.assertEqual(test, self.edited_content)
+
+    def test_edit_rename_table(self):
+        with patch(
+            "emang.common.call_editor"
+        ), patch(
+            "emang.common.read_file",
+            return_value=self.edited_content
+        ), patch(
+            "tempfile.NamedTemporaryFile",
+        ) as mock_named_temporary_file:
+            test = common.edit_rename_table(self.file_content)
+            mock_context_manager = mock_named_temporary_file.return_value
+            mock_context_manager.__enter__.assert_called_with()
+            mock_rename_table_file = (
+                mock_context_manager.__enter__.return_value)
+            mock_rename_table_file.write.assert_called_with(
+                self.file_content.encode("utf8"))
+            mock_rename_table_file.flush.assert_called_with()
+            self.assertEqual(test, self.edited_content.decode("utf8"))
