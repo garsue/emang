@@ -28,6 +28,12 @@ class TestCommon(unittest.TestCase):
             test = common.get_files()
             self.assertEqual(test, ["filename", "マルチバイト"])
 
+    def  test_fail(self):
+        func = lambda tuples: tuples
+        func = common.fail(func)
+        self.assertEqual(func([]), [])
+        self.assertEqual(func([("spam",)]), [("spam",)])
+
     def test_execute_rename(self):
         with patch(
                 "emang.common.to_abspath"
