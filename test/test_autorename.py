@@ -35,12 +35,6 @@ class TestAutoRename(unittest.TestCase):
         "作者 - タイトル.exp",
         "作者 - タイトル.exp"]
 
-    def setUp(self):
-        pass
-
-    def tearDown(self):
-        pass
-
     def test_get_matche_results(self):
         test = autorename.get_matche_results(self.files)
         self.assertIsNone(test[0])
