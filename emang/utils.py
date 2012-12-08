@@ -2,10 +2,6 @@
 #vim: fileencoding=utf-8
 
 from __future__ import print_function, division, unicode_literals
-import site
-
-
-input = getattr(site.builtins, "raw_input", input)
 
 
 def decode(string):

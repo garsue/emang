@@ -7,10 +7,12 @@ import os
 from os import path
 import subprocess
 import tempfile
+import site
 
 from . import utils
 
 
+input = getattr(site.builtins, "raw_input", input)
 curdir = path.abspath(os.curdir)
 to_abspath = partial(path.join, curdir)
 
