@@ -5,6 +5,8 @@ from __future__ import print_function, unicode_literals
 from functools import partial, wraps
 import os
 from os import path
+import site
+input = getattr(site.builtins, "raw_input", input)
 
 
 curdir = path.abspath(os.curdir)
@@ -44,7 +46,7 @@ def list_up(filename_tuples):
 
 @fail
 def require_confirm(filename_tuples):
-    ans = raw_input("Do you want to rename? ('yes' or 'no'): ")
+    ans = input("Do you want to rename? ('yes' or 'no'): ")
     if ans in ["y", "yes"]:
         return filename_tuples
     print("Canceled by user.")

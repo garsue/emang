@@ -55,6 +55,25 @@ class TestCommon(unittest.TestCase):
             mock_print.assert_called_with("Nothing to rename.")
             self.assertEqual(test, [])
 
+    def test_require_confirm(self):
+        with patch(
+            "emang.common.input", return_value="yes"
+        ) as mock_raw_input:
+            test = common.require_confirm(self.filename_tuples)
+            mock_raw_input.assert_called_with(
+                "Do you want to rename? ('yes' or 'no'): ")
+            self.assertEqual(test, self.filename_tuples)
+        with patch(
+            "emang.common.input",
+        ) as mock_raw_input, patch(
+            "site.builtins.print"
+        ) as mock_print:
+            test = common.require_confirm(self.filename_tuples)
+            mock_raw_input.assert_called_with(
+                "Do you want to rename? ('yes' or 'no'): ")
+            mock_print.assert_called_with("Canceled by user.")
+            self.assertEqual(test, [])
+
     def test_execute_rename(self):
         with patch(
                 "emang.common.to_abspath"
