@@ -3,50 +3,47 @@
 
 from __future__ import print_function, unicode_literals
 import unittest
+from mock import patch, call
 
 from emang import common
 
 
 class TestCommon(unittest.TestCase):
-    class Empty(object):
-        pass
-
-    orignal = Empty()
-    orignal.path = Empty()
-    orignal.os = Empty()
-    orignal.path.isfile = common.path.isfile
-    orignal.os.listdir = common.os.listdir
-    orignal.os.rename = common.os.rename
-    orignal.to_abspath = common.to_abspath
-
-    def setUp(self):
-        pass
-
     def test_decode(self):
         test = common.decode("すぱむ")
         self.assertEqual(test, "すぱむ")
         common.decode("すぱむ".encode("utf8"))
         self.assertEqual(test, "すぱむ")
 
-    def tearDown(self):
-        common.path.isfile = self.orignal.path.isfile
-        common.os.listdir = self.orignal.os.listdir
-        common.os.rename = self.orignal.os.rename
-        common.os.to_abspath = self.orignal.to_abspath
-
     def test_get_files(self):
         files = [
             ".hidden".encode("utf8"),
             "filename".encode("utf8"),
             "マルチバイト".encode("utf8")]
-        common.path.isfile = lambda _: True
-        common.os.listdir = lambda _: files
-        test = common.get_files()
-        self.assertEqual(test, ["filename", "マルチバイト"])
+        with patch(
+                "emang.common.path.isfile", return_value=True
+        ), patch(
+                "emang.common.os.listdir", return_value=files
+        ):
+            test = common.get_files()
+            self.assertEqual(test, ["filename", "マルチバイト"])
 
     def test_execute_rename(self):
-        common.os.rename = lambda x, y: (x, y)  # stub
-        common.to_abspath = lambda x: x
-        sample = [(1, 'a'), (2, 'b')]
-        test = common.execute_rename(sample)
-        self.assertEqual(test, sample)
+        with patch(
+                "emang.common.to_abspath"
+        ) as mock_to_abspath, patch(
+                "emang.common.os.rename"
+        ) as mock_os_rename:
+            sample = [(1, "a"), (2, "b")]
+            test = common.execute_rename(sample)
+            calls = [call(1), call("a"), call(2), call("b")]
+            mock_to_abspath.assert_has_calls(calls)
+            calls = [
+                call(
+                    mock_to_abspath.return_value, mock_to_abspath.return_value
+                ),
+                call(
+                    mock_to_abspath.return_value, mock_to_abspath.return_value
+                )]
+            mock_os_rename.assert_has_calls(calls)
+            self.assertEqual(test, sample)
