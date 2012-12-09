@@ -17,19 +17,9 @@ curdir = path.abspath(os.curdir)
 to_abspath = partial(path.join, curdir)
 
 
-def decode(string):
-    attrs = dir(string)
-    isdecodable = "decode" in attrs
-    isencodable = "encode" in attrs
-    isstr = isinstance(string, str)
-    if isdecodable and (isencodable is isstr):
-        return string.decode("utf8")
-    return string
-
-
 def get_files():
     not_dotfile = lambda name: path.isfile(name) and not name.startswith(".")
-    return [n for n in map(decode, os.listdir(curdir)) if not_dotfile(n)]
+    return [n for n in map(utils.decode, os.listdir(curdir)) if not_dotfile(n)]
 
 
 def fail(f):

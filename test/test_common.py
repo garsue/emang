@@ -39,12 +39,6 @@ new: author - title.exp
 old: [作者]タイトル.exp
 new: 作者 - タイトル.exp""".encode("utf8")
 
-    def test_decode(self):
-        test = common.decode("すぱむ")
-        self.assertEqual(test, "すぱむ")
-        common.decode("すぱむ".encode("utf8"))
-        self.assertEqual(test, "すぱむ")
-
     def test_get_files(self):
         files = [
             ".hidden".encode("utf8"),
