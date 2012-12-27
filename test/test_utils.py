@@ -13,3 +13,8 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(test, "すぱむ")
         utils.decode("すぱむ".encode("utf8"))
         self.assertEqual(test, "すぱむ")
+
+    def test_normalize(self):
+        target = b"\xe3\x81\x99\xe3\x81\xaf\xe3\x82\x9a\xe3\x82\x80"  # NFD
+        test = utils.normalize(target.decode("utf8")).encode("utf8")
+        self.assertEqual(test, "すぱむ".encode("utf8"))
