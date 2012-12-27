@@ -5,7 +5,7 @@ from __future__ import print_function, unicode_literals
 import unittest
 import re
 
-from mock import patch
+from mock import patch, Mock
 from emang import autorename
 
 
@@ -61,6 +61,8 @@ class TestAutoRename(unittest.TestCase):
         self.assertEqual(test, self.news)
 
     def test_main(self):
+        args = Mock()
+        args.normalize = False
         filename_tuples = [
             ("[author]title.exp", "author - title.exp"),
             ("[author]title_2.exp", "author - title.exp"),
@@ -74,5 +76,9 @@ class TestAutoRename(unittest.TestCase):
             "execute_rename.return_value": filename_tuples,
             "done.return_value": filename_tuples}
         with patch("emang.autorename.common", **attrs):
-            test = autorename.main()
+            test = autorename.main(args)
+            self.assertEqual(test, filename_tuples)
+        args.normalize = True
+        with patch("emang.autorename.common", **attrs):
+            test = autorename.main(args)
             self.assertEqual(test, filename_tuples)

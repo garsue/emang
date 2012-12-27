@@ -7,6 +7,7 @@ from functools import reduce
 from itertools import compress
 
 from . import common
+from . import utils
 
 
 def get_matche_results(files):
@@ -31,12 +32,19 @@ def compose_new_filenames(matches):
     return ["{0} - {1}.{2}".format(a, t, e) for a, t, e in filename_parts]
 
 
-def main():
+def build_filename_tuples(args):
     files = common.get_files()
+    if args.normalize:
+        news = [utils.normalize(f) for f in files]
+        return list(zip(files, news))
     matches = get_matche_results(files)
     olds = get_old_filenames(files, matches)
     news = compose_new_filenames(matches)
-    filename_tuples = list(zip(olds, news))
+    return list(zip(olds, news))
+
+
+def main(args):
+    filename_tuples = build_filename_tuples(args)
     sequence = [
         common.list_up,
         common.check_new_existence,
