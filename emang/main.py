@@ -7,20 +7,29 @@ import argparse
 from . import autorename, manual
 
 
-def get_args(commands):
+def get_args(setup_callbacks):
     parser = argparse.ArgumentParser(description="Manage E-comic files.")
     subparsers = parser.add_subparsers(title="subcommands")
-    for command_name, description, main_function in commands:
-        subparser = subparsers.add_parser(
-            command_name, description=description)
-        subparser.set_defaults(func=main_function)
+    for setup_callback in setup_callbacks:
+        setup_callback(subparsers)
     return parser.parse_args()
 
 
 def main():
-    commands = [
-        ("autorename", "rename automatically", autorename.main),
-        ("manual", "rename manually with default editor", manual.main)]
-    args = get_args(commands)
+    def setup_autorename(subparsers):
+        subparser = subparsers.add_parser(
+            "autorename",
+            description="rename automatically")
+        subparser.set_defaults(func=autorename.main)
+
+    def setup_manual(subparsers):
+        subparser = subparsers.add_parser(
+            "manual",
+            description="rename manually with default editor")
+        subparser.set_defaults(func=manual.main)
+
+    vars = locals().items()
+    setup_callbacks = [v for k, v in vars if k.startswith("setup_")]
+    args = get_args(setup_callbacks)
     args.func()
     return
