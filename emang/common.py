@@ -19,7 +19,7 @@ to_abspath = partial(path.join, curdir)
 
 def get_files():
     not_dotfile = lambda name: path.isfile(name) and not name.startswith(".")
-    return [n for n in map(utils.decode, os.listdir(curdir)) if not_dotfile(n)]
+    return [f for f in map(utils.decode, os.listdir(curdir)) if not_dotfile(f)]
 
 
 def fail(f):
