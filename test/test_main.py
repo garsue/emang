@@ -48,6 +48,14 @@ class TestMain(unittest.TestCase):
                     "manual",
                     description="rename manually with default editor")]
             add_parser.assert_has_calls(calls, any_order=True)
+            add_argument = add_parser.return_value.add_argument
+            calls = [
+                call(
+                    "-n", "--normalize", action="store_true", default=False,
+                    help="normalize filename into NFC unicode")]
+            add_argument.assert_has_calls(calls, any_order=True)
             set_defaults = add_parser.return_value.set_defaults
             calls = [call(func=autorename_main), call(func=manual_main)]
             set_defaults.assert_has_calls(calls, any_order=True)
+            args = get_args.return_value
+            args.func.assert_called_once_with(args)

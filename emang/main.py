@@ -20,6 +20,9 @@ def main():
         subparser = subparsers.add_parser(
             "autorename",
             description="rename automatically")
+        subparser.add_argument(
+            "-n", "--normalize", action="store_true", default=False,
+            help="normalize filename into NFC unicode")
         subparser.set_defaults(func=autorename.main)
 
     def setup_manual(subparsers):
@@ -31,5 +34,5 @@ def main():
     vars = locals().items()
     setup_callbacks = [v for k, v in vars if k.startswith("setup_")]
     args = get_args(setup_callbacks)
-    args.func()
+    args.func(args)
     return
