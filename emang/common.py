@@ -15,6 +15,7 @@ from . import utils
 input = getattr(site.builtins, "raw_input", input)
 curdir = path.abspath(os.curdir)
 to_abspath = partial(path.join, curdir)
+exists = lambda filename: path.exists(to_abspath(filename))
 
 
 def get_files():
@@ -47,8 +48,8 @@ def require_confirm(filename_tuples):
     return []
 
 
-def exists_pair(name):
-    return name, path.exists(to_abspath(name))
+def exists_pair(filename):
+    return filename, exists(filename)
 
 
 @fail

@@ -70,6 +70,7 @@ class TestAutoRename(unittest.TestCase):
             ("[作者]タイトル_2.exp", "作者 - タイトル.exp")]
         attrs = {
             "get_files.return_value": self.files,
+            "exists.return_value": False,
             "list_up.return_value": filename_tuples,
             "check_new_existence.return_value": filename_tuples,
             "require_confirm.return_value": filename_tuples,
