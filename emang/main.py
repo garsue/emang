@@ -4,7 +4,7 @@
 from __future__ import print_function, unicode_literals
 import argparse
 
-from . import autorename, manual
+from . import autorename, manual, normalize
 
 
 def get_args(setup_callbacks):
@@ -20,9 +20,6 @@ def main():
         subparser = subparsers.add_parser(
             "autorename",
             description="rename automatically")
-        subparser.add_argument(
-            "-n", "--normalize", action="store_true", default=False,
-            help="normalize filename into NFC unicode")
         subparser.set_defaults(func=autorename.main)
 
     def setup_manual(subparsers):
@@ -30,6 +27,12 @@ def main():
             "manual",
             description="rename manually with default editor")
         subparser.set_defaults(func=manual.main)
+
+    def setup_normalize(subparsers):
+        subparser = subparsers.add_parser(
+            "normalize",
+            description="normalize filename into NFC unicode")
+        subparser.set_defaults(func=normalize.main)
 
     vars = locals().items()
     setup_callbacks = [v for k, v in vars if k.startswith("setup_")]

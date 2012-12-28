@@ -5,7 +5,7 @@ from __future__ import print_function, unicode_literals
 import unittest
 import re
 
-from mock import patch, Mock
+from mock import patch
 from emang import autorename
 
 
@@ -60,26 +60,43 @@ class TestAutoRename(unittest.TestCase):
         test = autorename.compose_new_filenames(self.matches)
         self.assertEqual(test, self.news)
 
-    def test_main(self):
-        args = Mock()
-        args.normalize = False
+    def test_build_filename_tuples(self):
         filename_tuples = [
             ("[author]title.exp", "author - title.exp"),
             ("[author]title_2.exp", "author - title.exp"),
             ("[作者]タイトル.exp", "作者 - タイトル.exp"),
             ("[作者]タイトル_2.exp", "作者 - タイトル.exp")]
         attrs = {
-            "get_files.return_value": self.files,
-            "exists.return_value": False,
+            "get_matche_results.return_value": False,
+            "get_old_filenames.return_value": self.files,
+            "compose_new_filenames.return_value": self.files}
+        with patch(
+            "emang.autorename.common.get_files",
+            return_value=self.files
+        ), patch(
+            "emang.autorename",
+            **attrs
+        ):
+            test = autorename.build_filename_tuples()
+            self.assertEqual(test, filename_tuples)
+
+    def test_main(self):
+        filename_tuples = [
+            ("[author]title.exp", "author - title.exp"),
+            ("[author]title_2.exp", "author - title.exp"),
+            ("[作者]タイトル.exp", "作者 - タイトル.exp"),
+            ("[作者]タイトル_2.exp", "作者 - タイトル.exp")]
+        attrs = {
             "list_up.return_value": filename_tuples,
             "check_new_existence.return_value": filename_tuples,
             "require_confirm.return_value": filename_tuples,
             "execute_rename.return_value": filename_tuples,
             "done.return_value": filename_tuples}
-        with patch("emang.autorename.common", **attrs):
-            test = autorename.main(args)
-            self.assertEqual(test, filename_tuples)
-        args.normalize = True
-        with patch("emang.autorename.common", **attrs):
-            test = autorename.main(args)
+        with patch(
+            "emang.autorename.build_filename_tuples",
+            return_value=filename_tuples
+        ), patch(
+            "emang.autorename.common", **attrs
+        ):
+            test = autorename.main(None)
             self.assertEqual(test, filename_tuples)
