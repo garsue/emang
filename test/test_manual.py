@@ -63,5 +63,5 @@ new: 作者 - タイトル.exp"""
             "execute_rename.return_value": filename_tuples,
             "done.return_value": filename_tuples}
         with patch("emang.manual.common", **attrs):
-            test = manual.main()
+            test = manual.main(None)
             self.assertEqual(test, filename_tuples)
