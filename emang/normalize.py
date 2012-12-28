@@ -2,6 +2,7 @@
 #vim: fileencoding=utf-8
 
 from __future__ import print_function, division, unicode_literals
+from functools import reduce
 
 from . import common
 from . import utils
