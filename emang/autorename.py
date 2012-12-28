@@ -7,12 +7,11 @@ from functools import reduce
 from itertools import compress
 
 from . import common
-from . import utils
 
 
 def get_matche_results(files):
     # group(1): author, group(2): title, group(3): extension
-    pattern = re.compile(r"\[(.*)\](.*)\.(.*)")
+    pattern = re.compile(r"\[(.*)\] *(.*)\.(.*)")
     return [re.match(pattern, n) for n in files]
 
 
@@ -32,11 +31,8 @@ def compose_new_filenames(matches):
     return ["{0} - {1}.{2}".format(a, t, e) for a, t, e in filename_parts]
 
 
-def build_filename_tuples(args):
+def build_filename_tuples():
     files = common.get_files()
-    if args.normalize:
-        news = [f for f in map(utils.normalize, files) if not common.exists(f)]
-        return list(zip(files, news))
     matches = get_matche_results(files)
     olds = get_old_filenames(files, matches)
     news = compose_new_filenames(matches)
@@ -44,7 +40,7 @@ def build_filename_tuples(args):
 
 
 def main(args):
-    filename_tuples = build_filename_tuples(args)
+    filename_tuples = build_filename_tuples()
     sequence = [
         common.list_up,
         common.check_new_existence,

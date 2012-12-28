@@ -24,7 +24,7 @@ def to_tuples(rename_table):
     return [(old, new) for old, new in tuples if old != new]
 
 
-def main():
+def main(_):
     files = common.get_files()
     rename_table_body = build_rename_table_body(files)
     edited_rename_table = common.edit_rename_table(rename_table_body)
