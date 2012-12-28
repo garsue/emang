@@ -39,7 +39,6 @@ class TestMain(unittest.TestCase):
             for setup_callback in setup_callbacks:
                 setup_callback(subparsers)
             add_parser = subparsers.add_parser
-            print(add_parser)
             calls = [
                 call(
                     "autorename",

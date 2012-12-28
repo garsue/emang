@@ -52,7 +52,7 @@ new: 作者 - タイトル.exp""".encode("utf8")
             test = common.get_files()
             self.assertEqual(test, ["filename", "マルチバイト"])
 
-    def  test_fail(self):
+    def test_fail(self):
         func = lambda tuples: tuples
         func = common.fail(func)
         self.assertEqual(func([]), [])

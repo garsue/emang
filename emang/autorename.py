@@ -35,7 +35,7 @@ def compose_new_filenames(matches):
 def build_filename_tuples(args):
     files = common.get_files()
     if args.normalize:
-        news = [utils.normalize(f) for f in files]
+        news = [f for f in map(utils.normalize, files) if not common.exists(f)]
         return list(zip(files, news))
     matches = get_matche_results(files)
     olds = get_old_filenames(files, matches)
