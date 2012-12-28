@@ -11,7 +11,7 @@ from . import common
 
 def get_matche_results(files):
     # group(1): author, group(2): title, group(3): extension
-    pattern = re.compile(r"\[(.*)\](.*)\.(.*)")
+    pattern = re.compile(r"\[(.*)\] *(.*)\.(.*)")
     return [re.match(pattern, n) for n in files]
 
 
